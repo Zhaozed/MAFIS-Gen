@@ -1,0 +1,227 @@
+{
+    "system_name": "AirportRevenueFIS",
+    "inference_type": "Mamdani",
+    "defuzzification_method": "Centroid",
+    "input_variables": [
+        {
+            "name": "Satisfaction",
+            "range": [
+                1.0,
+                5.0,
+                0.1
+            ],
+            "terms": [
+                {
+                    "term_name": "Low",
+                    "mf_type": "gaussmf",
+                    "parameters": [
+                        1.5,
+                        0.5
+                    ]
+                },
+                {
+                    "term_name": "Medium",
+                    "mf_type": "gaussmf",
+                    "parameters": [
+                        3.0,
+                        0.5
+                    ]
+                },
+                {
+                    "term_name": "High",
+                    "mf_type": "gaussmf",
+                    "parameters": [
+                        4.5,
+                        0.3
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Waiting_Time",
+            "range": [
+                0.0,
+                5.0,
+                0.1
+            ],
+            "terms": [
+                {
+                    "term_name": "Low",
+                    "mf_type": "trimf",
+                    "parameters": [
+                        0,
+                        0,
+                        1.8
+                    ]
+                },
+                {
+                    "term_name": "Medium",
+                    "mf_type": "trimf",
+                    "parameters": [
+                        1.2,
+                        2.25,
+                        3.3
+                    ]
+                },
+                {
+                    "term_name": "High",
+                    "mf_type": "trimf",
+                    "parameters": [
+                        2.7,
+                        4.0,
+                        5.0
+                    ]
+                }
+            ]
+        }
+    ],
+    "output_variables": [
+        {
+            "name": "Consumption",
+            "range": [
+                0,
+                90,
+                1
+            ],
+            "terms": [
+                {
+                    "term_name": "Little",
+                    "mf_type": "trimf",
+                    "parameters": [
+                        0,
+                        0,
+                        30
+                    ]
+                },
+                {
+                    "term_name": "Average",
+                    "mf_type": "trimf",
+                    "parameters": [
+                        30,
+                        45,
+                        60
+                    ]
+                },
+                {
+                    "term_name": "Great",
+                    "mf_type": "trimf",
+                    "parameters": [
+                        60,
+                        90,
+                        90
+                    ]
+                }
+            ]
+        }
+    ],
+    "rules": [
+        {
+            "rule_id": "R1",
+            "weight": 1.0,
+            "connection_type": "AND",
+            "antecedents": {
+                "Satisfaction": "Low",
+                "Waiting_Time": "Low"
+            },
+            "consequent": {
+                "Consumption": "Little"
+            }
+        },
+        {
+            "rule_id": "R2",
+            "weight": 1.0,
+            "connection_type": "AND",
+            "antecedents": {
+                "Satisfaction": "Low",
+                "Waiting_Time": "Medium"
+            },
+            "consequent": {
+                "Consumption": "Little"
+            }
+        },
+        {
+            "rule_id": "R3",
+            "weight": 1.0,
+            "connection_type": "AND",
+            "antecedents": {
+                "Satisfaction": "Low",
+                "Waiting_Time": "High"
+            },
+            "consequent": {
+                "Consumption": "Average"
+            }
+        },
+        {
+            "rule_id": "R4",
+            "weight": 1.0,
+            "connection_type": "AND",
+            "antecedents": {
+                "Satisfaction": "Medium",
+                "Waiting_Time": "Low"
+            },
+            "consequent": {
+                "Consumption": "Little"
+            }
+        },
+        {
+            "rule_id": "R5",
+            "weight": 1.0,
+            "connection_type": "AND",
+            "antecedents": {
+                "Satisfaction": "Medium",
+                "Waiting_Time": "Medium"
+            },
+            "consequent": {
+                "Consumption": "Average"
+            }
+        },
+        {
+            "rule_id": "R6",
+            "weight": 1.0,
+            "connection_type": "AND",
+            "antecedents": {
+                "Satisfaction": "Medium",
+                "Waiting_Time": "High"
+            },
+            "consequent": {
+                "Consumption": "Average"
+            }
+        },
+        {
+            "rule_id": "R7",
+            "weight": 1.0,
+            "connection_type": "AND",
+            "antecedents": {
+                "Satisfaction": "High",
+                "Waiting_Time": "Low"
+            },
+            "consequent": {
+                "Consumption": "Average"
+            }
+        },
+        {
+            "rule_id": "R8",
+            "weight": 1.0,
+            "connection_type": "AND",
+            "antecedents": {
+                "Satisfaction": "High",
+                "Waiting_Time": "Medium"
+            },
+            "consequent": {
+                "Consumption": "Great"
+            }
+        },
+        {
+            "rule_id": "R9",
+            "weight": 1.0,
+            "connection_type": "AND",
+            "antecedents": {
+                "Satisfaction": "High",
+                "Waiting_Time": "High"
+            },
+            "consequent": {
+                "Consumption": "Great"
+            }
+        }
+    ]
+}

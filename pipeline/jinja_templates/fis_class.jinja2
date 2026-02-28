@@ -1,0 +1,81 @@
+# ==============================================================================
+# AUTOMATICALLY GENERATED CODE
+# Generator: FIS MDE Framework (M2T Engine)
+# Description: Interpretable Reasoning Kernel
+# Inference Type: {{ inference_type }}
+# ==============================================================================
+
+import numpy as np
+import skfuzzy as fuzz
+from skfuzzy import control as ctrl
+
+class {{ system_name }}:
+    def __init__(self):
+        # 1. Define Variables (Antecedents and Consequents)
+        {% for var in input_variables %}
+        self.{{ var.name|lower }} = ctrl.Antecedent(np.arange({{ var.range[0] }}, {{ var.range[1] + var.range[2] }}, {{ var.range[2] }}), '{{ var.name }}')
+        {% endfor %}
+        {% for var in output_variables %}
+        self.{{ var.name|lower }} = ctrl.Consequent(np.arange({{ var.range[0] }}, {{ var.range[1] + var.range[2] }}, {{ var.range[2] }}), '{{ var.name }}')
+        
+        #  Dynamic injection deblurring method (Centroid -> centroid, etc.)
+        self.{{ var.name|lower }}.defuzzify_method = '{{ defuzzification_method|lower }}'
+        {% endfor %}
+
+        # 2. Define Membership Functions
+        {% for var in input_variables + output_variables %}
+        {% for term in var.terms %}
+        {% if term.mf_type == 'gaussmf' %}
+        self.{{ var.name|lower }}['{{ term.term_name }}'] = fuzz.gaussmf(self.{{ var.name|lower }}.universe, {{ term.parameters[0] }}, {{ term.parameters[1] }})
+        {% elif term.mf_type == 'trimf' %}
+        self.{{ var.name|lower }}['{{ term.term_name }}'] = fuzz.trimf(self.{{ var.name|lower }}.universe, [{{ term.parameters[0] }}, {{ term.parameters[1] }}, {{ term.parameters[2] }}])
+        {% endif %}
+        {% endfor %}
+        {% endfor %}
+
+        # 3. Define Rule Base
+        self.rules = []
+        {% for rule in rules %}
+        # Rule {{ rule.rule_id }} (Weight: {{ rule.weight }}, Connection: {{ rule.connection_type }})
+        rule_{{ rule.rule_id|lower }} = ctrl.Rule(
+            # Dynamically select logical operators: & (AND) or | (OR)
+            {% for key, val in rule.antecedents.items() %}self.{{ key|lower }}['{{ val }}']{% if not loop.last %} {% if rule.connection_type == 'OR' %}|{% else %}&{% endif %} {% endif %}{% endfor %},
+            self.{{ rule.consequent.keys()|list|first|lower }}['{{ rule.consequent.values()|list|first }}']
+        )
+        self.rules.append(rule_{{ rule.rule_id|lower }})
+        {% endfor %}
+
+        # 4. Initialize Control System
+        self.system = ctrl.ControlSystem(self.rules)
+        self.simulation = ctrl.ControlSystemSimulation(self.system)
+
+    def evaluate(self, {% for var in input_variables %}{{ var.name|lower }}_val{% if not loop.last %}, {% endif %}{% endfor %}):
+        """Standard evaluation method."""
+        {% for var in input_variables %}
+        self.simulation.input['{{ var.name }}'] = {{ var.name|lower }}_val
+        {% endfor %}
+        try:
+            self.simulation.compute()
+            return self.simulation.output['{{ output_variables[0].name }}']
+        except KeyError:
+            return 0.0
+
+    def get_rule_activations(self, {% for var in input_variables %}{{ var.name|lower }}_val{% if not loop.last %}, {% endif %}{% endfor %}):
+        """
+        Dynamically generated method to extract internal activation strengths for White-box interpretation.
+        Required for generating Figure 4.8 and 4.10 in the paper.
+        """
+        # Calculate individual memberships
+        {% for var in input_variables %}
+        {% for term in var.terms %}
+        {{ var.name[:3]|lower }}_{{ term.term_name|lower }} = fuzz.interp_membership(self.{{ var.name|lower }}.universe, self.{{ var.name|lower }}['{{ term.term_name }}'].mf, {{ var.name|lower }}_val)
+        {% endfor %}
+        {% endfor %}
+
+        # Calculate rule strengths
+        return [
+            {% for rule in rules %}
+            # Dynamically select either min (AND) or max (OR) and multiply by the Rule Weight!
+            {% if rule.connection_type == 'OR' %}max{% else %}min{% endif %}({% for key, val in rule.antecedents.items() %}{{ key[:3]|lower }}_{{ val|lower }}{% if not loop.last %}, {% endif %}{% endfor %}) * {{ rule.weight }}{% if not loop.last %}, {% endif %} # {{ rule.rule_id }}
+            {% endfor %}
+        ]

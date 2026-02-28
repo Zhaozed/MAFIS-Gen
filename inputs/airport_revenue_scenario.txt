@@ -1,0 +1,39 @@
+System Name: Airport Revenue Fuzzy Inference System
+
+System Configuration:
+- Inference Type: Mamdani
+- Defuzzification Method: Centroid
+- Default Rule Weight: 1.0
+
+Variables Definition:
+1. Input Variable 1: "Satisfaction"
+   - Range: 1.0 to 5.0 (step 0.1)
+   - Linguistic Terms: 
+     - "Low" (Gaussian curve: mean 1.5, sigma 0.5)
+     - "Medium" (Gaussian curve: mean 3.0, sigma 0.5)
+     - "High" (Gaussian curve: mean 4.5, sigma 0.3)
+
+2. Input Variable 2: "Waiting_Time"
+   - Range: 0.0 to 5.0 hours (step 0.1)
+   - Linguistic Terms:
+     - "Low" (Triangular curve: 0, 0, 1.8)
+     - "Medium" (Triangular curve: 1.2, 2.25, 3.3)
+     - "High" (Triangular curve: 2.7, 4.0, 5.0)
+
+3. Output Variable: "Consumption"
+   - Range: 0 to 90 dollars (step 1)
+   - Linguistic Terms:
+     - "Little" (Triangular curve: 0, 0, 30)
+     - "Average" (Triangular curve: 30, 45, 60)
+     - "Great" (Triangular curve: 60, 90, 90)
+
+Rule Base:
+R1: IF Satisfaction is Low AND Waiting_Time is Low THEN Consumption is Little
+R2: IF Satisfaction is Low AND Waiting_Time is Medium THEN Consumption is Little
+R3: IF Satisfaction is Low AND Waiting_Time is High THEN Consumption is Average
+R4: IF Satisfaction is Medium AND Waiting_Time is Low THEN Consumption is Little
+R5: IF Satisfaction is Medium AND Waiting_Time is Medium THEN Consumption is Average
+R6: IF Satisfaction is Medium AND Waiting_Time is High THEN Consumption is Average
+R7: IF Satisfaction is High AND Waiting_Time is Low THEN Consumption is Average
+R8: IF Satisfaction is High AND Waiting_Time is Medium THEN Consumption is Great
+R9: IF Satisfaction is High AND Waiting_Time is High THEN Consumption is Great

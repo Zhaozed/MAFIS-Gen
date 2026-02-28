@@ -1,0 +1,173 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "FIS Metamodel (M2 Level constraint)",
+  "description": "Formal schema defining the Platform-Independent Model (PIM) for a Fuzzy Inference System, strictly aligned with UML in my parper and supporting both Mamdani and Sugeno paradigms.",
+  "type": "object",
+  "required": [
+    "system_name",
+    "inference_type",
+    "defuzzification_method",
+    "input_variables",
+    "output_variables",
+    "rules"
+  ],
+  "properties": {
+    "system_name": {
+      "type": "string"
+    },
+    "inference_type": {
+      "type": "string",
+      "enum": ["Mamdani", "Sugeno"],
+      "description": "Type of fuzzy inference system"
+    },
+    "defuzzification_method": {
+      "type": "string",
+      "description": "Method used for defuzzification. Constrained by inference_type."
+    },
+    "input_variables": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/fuzzy_variable" }
+    },
+    "output_variables": {
+      "type": "array"
+    },
+    "rules": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/rule_structure" }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": { "inference_type": { "const": "Mamdani" } }
+      },
+      "then": {
+        "properties": {
+          "defuzzification_method": {
+            "enum": ["Centroid", "Bisector", "SOM", "MOM", "LOM"]
+          },
+          "output_variables": {
+            "items": { "$ref": "#/definitions/fuzzy_variable" }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": { "inference_type": { "const": "Sugeno" } }
+      },
+      "then": {
+        "properties": {
+          "defuzzification_method": {
+            "enum": ["Wtaver", "Wtsum"]
+          },
+          "output_variables": {
+            "items": { "$ref": "#/definitions/sugeno_variable" }
+          }
+        }
+      }
+    }
+  ],
+  "definitions": {
+    "fuzzy_variable": {
+      "type": "object",
+      "required": ["name", "range", "terms"],
+      "properties": {
+        "name": { "type": "string" },
+        "range": {
+          "type": "array",
+          "description": "[min, max, step]",
+          "minItems": 3,
+          "maxItems": 3,
+          "items": { "type": "number" }
+        },
+        "terms": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["term_name", "mf_type", "parameters"],
+            "properties": {
+              "term_name": { "type": "string" },
+              "mf_type": {
+                "type": "string",
+                "enum": ["gaussmf", "trimf", "trapmf", "gbellmf", "sigmf"],
+                "description": "Standard Fuzzy Membership function types"
+              },
+              "parameters": {
+                "type": "array",
+                "items": { "type": "number" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "sugeno_variable": {
+      "type": "object",
+      "required": ["name", "range", "terms"],
+      "properties": {
+        "name": { "type": "string" },
+        "range": {
+          "type": "array",
+          "description": "[min, max]",
+          "minItems": 2,
+          "items": { "type": "number" }
+        },
+        "terms": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["term_name", "mf_type", "parameters"],
+            "properties": {
+              "term_name": { "type": "string" },
+              "mf_type": {
+                "type": "string",
+                "enum": ["linear", "constant"],
+                "description": "Sugeno output functions"
+              },
+              "parameters": {
+                "type": "array",
+                "description": "Coefficients for the linear equation or the constant value",
+                "items": { "type": "number" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "rule_structure": {
+      "type": "object",
+      "required": ["rule_id", "antecedents", "consequent", "connection_type"],
+      "properties": {
+        "rule_id": { "type": "string" },
+        "weight": {
+          "type": "number",
+          "default": 1.0,
+          "minimum": 0.0,
+          "maximum": 1.0,
+          "description": "Weight of the rule (usually 0 to 1)"
+        },
+        "connection_type": {
+          "type": "string",
+          "enum": ["AND", "OR"],
+          "description": "Logical connection between antecedents"
+        },
+        "antecedents": {
+          "type": "object",
+          "description": "Key-value pairs representing 'InputVar': 'LinguisticTerm'",
+          "additionalProperties": { "type": "string" }
+        },
+        "consequent": {
+          "type": "object",
+          "description": "Key-value pair for the output variable and its term/equation. Adapts dynamically.",
+          "additionalProperties": {
+            "anyOf": [
+              { "type": "string" },
+              { "type": "array", "items": { "type": "number" } }
+            ]
+          }
+        }
+      }
+    }
+  }
+}
