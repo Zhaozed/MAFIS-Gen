@@ -1,27 +1,27 @@
-# MAFIS-Gen: An LLM-Assisted Model-Driven Framework for Fuzzy Inference System Generation
+MAFIS-Gen: An LLM-Assisted Model-Driven Framework for Fuzzy Inference System Generation
+📖 Project Introduction
 
-## 📖 Project Introduction
-**MAFIS-Gen** (Model-driven Automated Fuzzy Inference System Generator) is a research framework designed to bridge the gap between human domain expertise and executable **Explainable AI (XAI)**. 
+MAFIS-Gen (Model-driven Automated Fuzzy Inference System Generator) is a research framework designed to bridge the gap between human domain expertise and executable Explainable AI (XAI).
 
 Traditional Fuzzy Inference System (FIS) development requires both deep domain knowledge and manual programming. MAFIS-Gen automates this by:
-1.  **Parsing** natural language requirements into formal Platform-Independent Models (PIM) using LLMs.
-2.  **Generating** ready-to-use Python code (based on `scikit-fuzzy`) via Jinja2 templates.
-3.  **Ensuring** behavioral fidelity through automated validation scripts.
 
+Parsing natural language requirements into formal Platform-Independent Models (PIM) using LLMs
 
+Generating ready-to-use Python code (based on scikit-fuzzy) via Jinja2 templates
 
----
+Ensuring behavioral fidelity through automated validation scripts
 
-## 🚀 Key Features
-* **Zero-Coding Pipeline:** Automatically generates a complete Python FIS class from a JSON configuration.
-* **Behavioral Fidelity:** Preserves 100% of the expert's logical intent through formal M2M/M2T transformations.
-* **White-box Interpretability:** Every decision made by the generated system is traceable back to the expert's rules.
-* **High Efficiency:** Reduces development time from days to minutes by decoupling domain logic from implementation.
+🚀 Key Features
 
----
+Zero-Coding Pipeline: Automatically generates a complete Python FIS class from a JSON configuration
 
-## 📂 Repository Structure
-```text
+Behavioral Fidelity: Preserves 100% of the expert's logical intent through formal M2M/M2T transformations
+
+White-box Interpretability: Every decision made by the generated system is traceable back to the expert's rules
+
+High Efficiency: Reduces development time from days to minutes by decoupling domain logic from implementation
+
+📂 Repository Structure
 MAFIS-Gen/
 ├── pipeline/                # Core transformation engines
 │   ├── m2m_transformer.py   # NL to PIM (LLM-based)
@@ -36,49 +36,52 @@ MAFIS-Gen/
 │   └── *.png                # Generated experimental figures (4.7 - 4.10)
 ├── generated_outputs/       # Storage for intermediate PIMs and generated Python classes
 └── requirements.txt         # Project dependencies
-
-## ⚙️ Installation & Usage
+⚙️ Installation & Usage
 1. Requirements
-Ensure you have Python 3.8+ installed. Install the dependencies:
 
-```bash
+Ensure you have Python 3.8+ installed.
+
 pip install -r requirements.txt
+⚙️ Core Usage: Generating the FIS Code
 
-## ⚙️ Core Usage: Generating the FIS Code
+Before running any experiments, generate the Python execution code from the JSON configuration (PIM).
+The framework uses a Jinja2 template engine to achieve this with zero manual coding.
 
-Before running any experiments, you need to generate the Python execution code from the JSON configuration (PIM). The framework uses a Jinja2 template engine to achieve this with zero manual coding.
+Command:
 
-**Command:**
-```bash
-python3 pipeline/m2t_generator.py --pim generated_outputs/pim.json --output generated_outputs/AirportRevenueFIS.py
+python3 pipeline/m2t_generator.py \
+  --pim generated_outputs/pim.json \
+  --output generated_outputs/AirportRevenueFIS.py
+🧪 Experiment 1: Framework Capability (Section 4.2.4)
 
-Experiment 1: Framework Capability (Section 4.2.4)
 Validates the basic functionality of the generated system to ensure it correctly parses the 2-input, 9-rule Mamdani inference logic.
 
-Run command:
+Run:
 
-Bash
 python3 experiments/run_section_4_2_4.py
-Experiment 2: Extensibility Analysis (Section 4.3)
+🧪 Experiment 2: Extensibility Analysis (Section 4.3)
+
 Demonstrates the framework's flexibility by introducing a new input variable (Travel_Purpose) without altering the underlying code generation engine.
 
-Step A: Generate the extended system:
-
-Bash
-python3 pipeline/m2t_generator.py --pim generated_outputs/airport_revenue_extended.json --output generated_outputs/AirportRevenueFIS_Extended.py
-Step B: Run the evaluation:
-
-Bash
+Step A — Generate the extended system
+python3 pipeline/m2t_generator.py \
+  --pim generated_outputs/airport_revenue_extended.json \
+  --output generated_outputs/AirportRevenueFIS_Extended.py
+Step B — Run the evaluation
 python3 experiments/run_section_4_3.py
-Experiment 3: Behavioral Fidelity Analysis (Section 4.4)
-Proves that the generated code strictly adheres to the semantic relationships and logical intent encoded by the domain expert. This script automatically generates the evaluation figures.
+🧪 Experiment 3: Behavioral Fidelity Analysis (Section 4.4)
 
-Run command:
+Proves that the generated code strictly adheres to the semantic relationships and logical intent encoded by the domain expert.
+This script automatically generates the evaluation figures.
 
-Bash
+Run:
+
 python3 experiments/run_section_4_4.py
-Visualized Results from Section 4.4:
+📊 Visualized Results from Section 4.4
+Rule Activation Analysis (Figure 4.10)
 
-Rule Activation Analysis (Figure 4.10) This heatmap demonstrates the precise "firing" strength of each fuzzy rule across five distinct test scenarios, proving white-box mathematical traceability.
+This heatmap demonstrates the precise firing strength of each fuzzy rule across five distinct test scenarios, proving white-box mathematical traceability.
 
-Sensitivity Analysis (Figure 4.9) Validates the monotonic relationship between input variables (Satisfaction) and the output (Consumption) at different Waiting Time levels, reflecting the interaction effects embedded in the expert knowledge.
+Sensitivity Analysis (Figure 4.9)
+
+Validates the monotonic relationship between input variables (Satisfaction) and the output (Consumption) at different Waiting Time levels, reflecting the interaction effects embedded in the expert knowledge.
