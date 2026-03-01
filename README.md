@@ -1,77 +1,84 @@
-<!--
- * @Author: error: error: git config user.name & please set dead value or install git && error: git config user.email & please set dead value or install git & please set dead value or install git
- * @Date: 2026-02-28 03:54:55
- * @LastEditors: error: error: git config user.name & please set dead value or install git && error: git config user.email & please set dead value or install git & please set dead value or install git
- * @LastEditTime: 2026-02-28 03:55:11
- * @FilePath: /python_test/MAFIS-Gen/README.md
- * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
--->
+# MAFIS-Gen: An LLM-Assisted Model-Driven Framework for Fuzzy Inference System Generation
 
-# MAFIS-Gen: Model-Driven Automated Fuzzy Inference System Generator
+## 📖 Project Introduction
+**MAFIS-Gen** (Model-driven Automated Fuzzy Inference System Generator) is a research framework designed to bridge the gap between human domain expertise and executable **Explainable AI (XAI)**. 
 
-[![Python Version](https://img.shields.io/badge/python-3.8%2B-blue.svg)](https://www.python.org/)
-[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
-[![MDE M2T](https://img.shields.io/badge/MDE-Model_to_Text-orange.svg)]()
+Traditional Fuzzy Inference System (FIS) development requires both deep domain knowledge and manual programming. MAFIS-Gen automates this by:
+1.  **Parsing** natural language requirements into formal Platform-Independent Models (PIM) using LLMs.
+2.  **Generating** ready-to-use Python code (based on `scikit-fuzzy`) via Jinja2 templates.
+3.  **Ensuring** behavioral fidelity through automated validation scripts.
 
-> **A Replication Package for the paper:** _(Insert Your Paper Title Here)_
 
-## 📖 Overview
 
-MAFIS-Gen is an end-to-end Automated Model-Driven Engineering (MDE) framework designed to transform natural language domain expertise into a fully executable, White-box Fuzzy Inference System (FIS).
+---
 
-Instead of manually coding complex fuzzy logic rules and membership functions, this pipeline utilizes a Large Language Model (LLM) guided by strict formal metamodels (M2) to parse domain logic, and a Jinja2-based Model-to-Text (M2T) engine to dynamically generate the executable reasoning kernel.
+## 🚀 Key Features
+* **Zero-Coding Pipeline:** Automatically generates a complete Python FIS class from a JSON configuration.
+* **Behavioral Fidelity:** Preserves 100% of the expert's logical intent through formal M2M/M2T transformations.
+* **White-box Interpretability:** Every decision made by the generated system is traceable back to the expert's rules.
+* **High Efficiency:** Reduces development time from days to minutes by decoupling domain logic from implementation.
+
+---
 
 ## 📂 Repository Structure
+```text
+MAFIS-Gen/
+├── pipeline/                # Core transformation engines
+│   ├── m2m_transformer.py   # NL to PIM (LLM-based)
+│   ├── m2t_generator.py     # PIM to Python (Jinja2-based)
+│   └── jinja_templates/     # Code generation templates (fis_class.jinja2)
+├── metaModels/              # System constraints & schemas (fis_schema.json)
+├── inputs/                  # Domain-specific scenarios in natural language
+├── experiments/             # Evaluation scripts & visualization results
+│   ├── run_section_4_2_4.py # Framework capability test
+│   ├── run_section_4_3.py   # Extensibility analysis (Extended Model)
+│   ├── run_section_4_4.py   # Behavioral fidelity analysis
+│   └── *.png                # Generated experimental figures (4.7 - 4.10)
+├── generated_outputs/       # Storage for intermediate PIMs and generated Python classes
+└── requirements.txt         # Project dependencies
 
-The architecture of this repository mirrors the MDE pipeline described in the paper:
-
-- **`inputs/`**: Contains raw natural language descriptions from domain experts.
-- **`metamodels/`**: Defines the formal M2-level constraint (`fis_schema.json`) that strictly regulates the Platform-Independent Model (PIM).
-- **`pipeline/`**: The core MDE transformation engine.
-    - `m2m_transformer.py`: Model-to-Model transformation (Natural Language -> PIM JSON).
-    - `m2t_generator.py`: Model-to-Text code generation (PIM JSON -> Python Kernel).
-    - `jinja_templates/`: Contains the master template for generating the mathematical white-box engine.
-- **`generated_outputs/`**: The destination for the auto-generated code (e.g., `AirportRevenueFIS.py`).
-- **`experiments/`**: Scripts to verify the mathematical precision and interpretability of the generated code (Replicating paper figures).
-
-## 🚀 Getting Started
-
-### 1. Environment Setup
-
-Ensure you have Python 3.8+ installed. Install the required dependencies using the provided `requirements.txt`:
+## ⚙️ Installation & Usage
+1. Requirements
+Ensure you have Python 3.8+ installed. Install the dependencies:
 
 ```bash
 pip install -r requirements.txt
-```
 
-2. Run the End-to-End Pipeline
-   Step 1: Generate the Platform-Independent Model (PIM)
-   This script parses the expert's text and formalizes it into a JSON structure guided by the metamodel.
+## ⚙️ Core Usage: Generating the FIS Code
 
-Bash
-cd pipeline
-python m2m_transformer.py
-(Success Output: ✅ [M2M] Successfully generated PIM model...)
+Before running any experiments, you need to generate the Python execution code from the JSON configuration (PIM). The framework uses a Jinja2 template engine to achieve this with zero manual coding.
 
-Step 2: Generate the Executable FIS Code (M2T)
-This script injects the PIM into the Jinja2 template to dynamically compile the Python reasoning kernel.
+**Command:**
+```bash
+python3 pipeline/m2t_generator.py --pim generated_outputs/pim.json --output generated_outputs/AirportRevenueFIS.py
 
-Bash
-python m2t_generator.py
-(Success Output: ✅ [M2T] Successfully generated executable FIS reasoning kernel...)
+Experiment 1: Framework Capability (Section 4.2.4)
+Validates the basic functionality of the generated system to ensure it correctly parses the 2-input, 9-rule Mamdani inference logic.
 
-3. Verify White-Box Execution (Experiment Replication)
-   Once the code is generated in the generated_outputs/ folder, run the verification script to test the white-box rule activations (e.g., Scenario E from the paper):
+Run command:
 
 Bash
-cd ../experiments
-python verify_execution.py
-Expected Console Output:
-The system will output the crisp predicted value (e.g., $77.38) and print the exact activation weight of every internal rule. You will observe precise mathematical behavior, such as R9 taking the dominant weight (0.5000) and the Gaussian tail characteristics for partial activations.
+python3 experiments/run_section_4_2_4.py
+Experiment 2: Extensibility Analysis (Section 4.3)
+Demonstrates the framework's flexibility by introducing a new input variable (Travel_Purpose) without altering the underlying code generation engine.
 
-🧠 Core Scientific Contributions Demonstrated
-Metamodel-Guided Parsing: The fis_schema.json guarantees that LLM outputs are syntactically and semantically flawless for fuzzy logic operations.
+Step A: Generate the extended system:
 
-Automated M2T Translation: The Jinja2 engine bridges the gap between static JSON constraints and a dynamic skfuzzy Python implementation.
+Bash
+python3 pipeline/m2t_generator.py --pim generated_outputs/airport_revenue_extended.json --output generated_outputs/AirportRevenueFIS_Extended.py
+Step B: Run the evaluation:
 
-White-Box Interpretability: The generated code automatically includes a get_rule_activations() method, exposing internal reasoning weights without manual coding.
+Bash
+python3 experiments/run_section_4_3.py
+Experiment 3: Behavioral Fidelity Analysis (Section 4.4)
+Proves that the generated code strictly adheres to the semantic relationships and logical intent encoded by the domain expert. This script automatically generates the evaluation figures.
+
+Run command:
+
+Bash
+python3 experiments/run_section_4_4.py
+Visualized Results from Section 4.4:
+
+Rule Activation Analysis (Figure 4.10) This heatmap demonstrates the precise "firing" strength of each fuzzy rule across five distinct test scenarios, proving white-box mathematical traceability.
+
+Sensitivity Analysis (Figure 4.9) Validates the monotonic relationship between input variables (Satisfaction) and the output (Consumption) at different Waiting Time levels, reflecting the interaction effects embedded in the expert knowledge.
